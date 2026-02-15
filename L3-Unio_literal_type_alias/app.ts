@@ -1,79 +1,245 @@
-//! Union, | -> pipe in Ts
-// either of one data types
+/*********************************************************
+ * TypeScript Union, Literal & Type Alias — Complete Notes
+ *********************************************************/
 
-// function combine(num1 : number | string,num2 : number | string){
-//     let result;
-//     if(typeof num1 == 'number' && typeof num2 == 'number'){
-//         result = +num1 + +num2;
-//     }
-//     else{
-//         result = num1.toString() + num2.toString();
-//     }
-//     return result;
-// }
+console.log("=== Union | Literal | Type Alias Notes ===");
 
-// const sum = combine(10,20);
-// const combinestring = combine("pratik ","singh");
-// console.log(sum,combinestring);
+/*
+These three concepts help us:
 
-//! literal type, | -> used in Ts
-// define our own type
+- Union      → allow multiple types
+- Literal    → allow exact values
+- Type Alias → create reusable custom types
 
-// function combine(num1 : number | string,num2 : number | string,convertiontype : "as-number" | "as-string"){
-//     let result;
-//     if(typeof num1 == 'number' && typeof num2 == 'number' || convertiontype == 'as-number'){
-//         result = +num1 + +num2;
-//     }
-//     else{
-//         result = num1.toString() + num2.toString();
-//     }
-//     return result;
-// }
+They improve readability and type safety.
+*/
 
-// const sum = combine(10,20,"as-number");
-// const sum2 = combine("10","70","as-number");
-// const combinestring = combine("pratik ","singh","as-string");
-// console.log(sum,sum2,combinestring)
+// =======================================================
+// 1. Union Types ( | )
+// =======================================================
 
-//! type alias , type -> used in Ts
-// define custom type
+/*
+Union means: either of the given types.
+*/
 
-// type combinable = number | string; // used combinable rather than number | string
-// function combine(
-//   num1: combinable,
-//   num2: combinable,
-//   convertiontype: "as-number" | "as-string",
-// ) {
-//   let result;
-//   if (
-//     (typeof num1 == "number" && typeof num2 == "number") ||
-//     convertiontype == "as-number"
-//   ) {
-//     result = +num1 + +num2;
-//   } else {
-//     result = num1.toString() + num2.toString();
-//   }
-//   return result;
-// }
-// const sum = combine(10, 20, "as-number");
-// const sum2 = combine("10", "70", "as-number");
-// const combinestring = combine("pratik ", "singh", "as-string");
-// console.log(sum, sum2, combinestring);
+function combineBasic(num1: number | string, num2: number | string) {
+  let result;
 
+  if (typeof num1 === "number" && typeof num2 === "number") {
+    result = num1 + num2;
+  } else {
+    result = num1.toString() + num2.toString();
+  }
 
-// more use case =>>>> we fine Object types using alias to increase readibility
+  return result;
+}
+
+console.log("Union Number:", combineBasic(10, 20));
+console.log("Union String:", combineBasic("Pratik ", "Singh"));
+
+/*
+Union Types are commonly used when:
+- API values can vary
+- Inputs may be number or string
+*/
+
+// =======================================================
+// 2. Literal Types
+// =======================================================
+
+/*
+Literal types restrict values to EXACT strings or numbers.
+*/
+
+function combineLiteral(
+  num1: number | string,
+  num2: number | string,
+  conversionType: "as-number" | "as-string"
+) {
+  let result;
+
+  if (
+    (typeof num1 === "number" && typeof num2 === "number") ||
+    conversionType === "as-number"
+  ) {
+    result = +num1 + +num2;
+  } else {
+    result = num1.toString() + num2.toString();
+  }
+
+  return result;
+}
+
+console.log(combineLiteral(10, 20, "as-number"));
+console.log(combineLiteral("10", "70", "as-number"));
+console.log(combineLiteral("Pratik ", "Singh", "as-string"));
+
+/*
+Literal types prevent invalid values:
+
+combineLiteral(10,20,"random") ❌
+*/
+
+// =======================================================
+// 3. Type Alias
+// =======================================================
+
+/*
+Type alias lets us define custom reusable types.
+*/
+
+type Combinable = number | string;
+type Conversion = "as-number" | "as-string";
+
+function combineAlias(
+  num1: Combinable,
+  num2: Combinable,
+  conversionType: Conversion
+) {
+  let result;
+
+  if (
+    (typeof num1 === "number" && typeof num2 === "number") ||
+    conversionType === "as-number"
+  ) {
+    result = +num1 + +num2;
+  } else {
+    result = num1.toString() + num2.toString();
+  }
+
+  return result;
+}
+
+console.log(combineAlias(10, 20, "as-number"));
+console.log(combineAlias("10", "70", "as-number"));
+console.log(combineAlias("Hello ", "TS", "as-string"));
+
+/*
+Type Alias improves:
+- Readability
+- Maintainability
+- Reusability
+*/
+
+// =======================================================
+// 4. Object Type Alias (Very Common)
+// =======================================================
+
 type User = {
-    name : string;
-    age : number;
-    skills : string[];
-}
-const user : User = {
-    name : "pratik",
-    age : 20,
-    skills : ["coding"]
+  name: string;
+  age: number;
+  skills: string[];
+};
+
+const user: User = {
+  name: "Pratik",
+  age: 20,
+  skills: ["coding"]
+};
+
+function greet(user: User) {
+  console.log(`Hi, from ${user.name}`);
 }
 
-function greet(user:User ){
-    console.log(`hi, from ${user.name}`);
-}
 greet(user);
+
+/*
+Object aliases are heavily used in:
+- Backend models
+- API responses
+- Redux state
+- React props
+*/
+
+// =======================================================
+// 5. Union with Object Types
+// =======================================================
+
+type Admin = {
+  role: "admin";
+  permissions: string[];
+};
+
+type NormalUser = {
+  role: "user";
+};
+
+type AppUser = Admin | NormalUser;
+
+function checkRole(user: AppUser) {
+  if (user.role === "admin") {
+    console.log("Permissions:", user.permissions);
+  } else {
+    console.log("Normal user");
+  }
+}
+
+// =======================================================
+// 6. Literal + Union = Discriminated Union
+// =======================================================
+
+type Circle = {
+  kind: "circle";
+  radius: number;
+};
+
+type Square = {
+  kind: "square";
+  side: number;
+};
+
+type Shape = Circle | Square;
+
+function area(shape: Shape) {
+  switch (shape.kind) {
+    case "circle":
+      return Math.PI * shape.radius * shape.radius;
+    case "square":
+      return shape.side * shape.side;
+  }
+}
+
+/*
+This pattern is called Discriminated Union.
+Very powerful.
+*/
+
+// =======================================================
+// 7. Type Alias vs Interface
+// =======================================================
+
+/*
+Type Alias:
+- Can define union & primitives
+- Cannot be merged
+
+Interface:
+- Best for objects/classes
+- Supports declaration merging
+
+Rule:
+Use type → unions / literals
+Use interface → objects
+*/
+
+// =======================================================
+// 8. Interview Summary
+//
+// Union:
+// - allows multiple types
+//
+// Literal:
+// - allows exact values
+//
+// Type Alias:
+// - reusable custom types
+//
+// Used everywhere in:
+// - APIs
+// - Models
+// - Props
+// - State
+//
+// =======================================================
+
+console.log("=== Union / Literal / Type Alias Notes Loaded ===");

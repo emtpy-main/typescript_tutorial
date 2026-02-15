@@ -1,167 +1,247 @@
-//! Basic: class
-// class Department {
-//     name : string;
-//     constructor(n:string){
-//         this.name = n;
-//     }
-//     describe(this:Department){
-//         console.log("Deparment ",this.name);
-        
-//     } 
-// }
+/*********************************************************
+ * TypeScript Classes — Complete Notes
+ *********************************************************/
 
-// let accountingdept = new Department("accounting");
-// accountingdept.describe()
+console.log("=== TypeScript Classes Notes ===");
 
-// const accountingcopy = {
-//     name : "dummpy",
-//     describe : accountingdept.describe
-// }
-// accountingcopy.describe()
+/*
+Classes in TS support:
+- OOP concepts
+- Access modifiers
+- Inheritance
+- Abstract classes
+- Getters / Setters
+- Encapsulation
+*/
 
+// =======================================================
+// 1. Basic Class
+// =======================================================
 
+class DepartmentBasic {
+  name: string;
 
+  constructor(n: string) {
+    this.name = n;
+  }
 
-//! access Modifiy
-// class Department {
-//     // name : string;
-//     // private employee : string[];
-//     // constructor(n:string){
-//     //     this.name = n;
-//     //     this.employee = [];
-//     // }
-//     //============== shortHand to declare attribute
-//     constructor(public name : string, private employee:string[]){
+  describe(this: DepartmentBasic) {
+    console.log("Department:", this.name);
+  }
+}
 
-//     }
-//     describe(this:Department){
-//         console.log("Deparment ",this.name);
-//     } 
-//     addemployee(s:string):void{
-//         this.employee.push(s);
-//     }
-//     displayemployee():void{
-//         console.log("No of emplyee: "+this.employee.length);
-//         console.log(this.employee);
-//     }
-// }
+const dept = new DepartmentBasic("Accounting");
+dept.describe();
 
-// let accountingdept = new Department("accounting",[]);
-// // let accountingdept = new Department("accounting");
-// accountingdept.describe()
-// accountingdept.addemployee("Pratik");
-// accountingdept.addemployee("rahul");
-// accountingdept.addemployee("ram");
-// // accountingdept.employee = ["re"] // this is wrong accessible outside anyonw can directly edit it
-// accountingdept.displayemployee();
+/*
+this: DepartmentBasic ensures method is only called
+on correct object.
+*/
 
+// =======================================================
+// 2. Access Modifiers + Constructor Shorthand
+// =======================================================
 
-//! Readonly -> only once we can instilize or assign value in  that varaible
-// class Department {
-//     name : string;
-//     private readonly id : number;
-//     constructor(n:string,ID:number){
-//         this.name = n;
-//         this.id = ID;
-//     }
-//     describe(this:Department){
-//         console.log("Deparment ",this.name);
-//     } 
-//     // modifyID(n:number){ // can not modify one written
-//     //     this.id = n;
-//     // }
-// }
-
-// let accountingdept = new Department("accounting",920101919);
-// accountingdept.describe()
-
-
-
-//! Inheritance
-//! overriding, protected variable
-//! getter and setter
 class Department {
-    private name : string;
-    private readonly id : number;
-    protected employee : string[];
-    constructor(n:string,ID:number){
-        this.name = n;
-        this.id = ID;
-        this.employee = [];
-    }
-    describe(this:Department){
-        console.log("Deparment ",this.name);
-    } 
-    addemployee(s:string){
-        this.employee.push(s);
-    }
-    // modifyID(n:number){ // can not modify one written
-    //     this.id = n;
-    // }
+  constructor(
+    public name: string,
+    private employees: string[] = []
+  ) {}
+
+  addEmployee(emp: string) {
+    this.employees.push(emp);
+  }
+
+  printEmployees() {
+    console.log("Employees:", this.employees);
+  }
 }
 
-class AccountingDeptartment extends Department{
-    constructor(id:number,private report : string[]){
-        super("Accouting",id);
-    }
-    addreport(text:string){
-        this.report.push(text);
-    }
-    display(){
-        console.log("report: ",this.report);
-    }
-    addemployee(s: string): void {
-        if(s=="patel"){
-            return;
-        }
-        this.employee.push(s);
-    }
-    get getreports(){
-        if(this.report.length>0){
-            return this.report;
-        }
-        throw new Error("Reports are empty");
-    }
-    set setreports(value : string){
-        if(!value){
-            this.report.push(value);
-        }
-        return;
-    }
+const d1 = new Department("HR");
+d1.addEmployee("Pratik");
+d1.addEmployee("Rahul");
+d1.printEmployees();
 
+/*
+public     → accessible everywhere
+private    → only inside class
+protected  → class + subclasses
+*/
+
+// =======================================================
+// 3. readonly Properties
+// =======================================================
+
+class DepartmentReadonly {
+  constructor(
+    public name: string,
+    private readonly id: number
+  ) {}
+
+  describe() {
+    console.log(this.name, this.id);
+  }
 }
-const account = new AccountingDeptartment(8390293,[]);
-account.addreport("you are fine and beautiful")
-account.display();
-console.log(account.getreports);
 
+const dr = new DepartmentReadonly("IT", 101);
+dr.describe();
+// dr.id = 2 ❌ cannot modify
 
+// =======================================================
+// 4. Inheritance + protected
+// =======================================================
 
-//! Abstract class
-abstract class Deparment2{
-    name:string;
-    employee:string[] = [];
-    constructor(s:string){
-        this.name=s;
-    }
-    set addemployee(s : string){
-        this.employee.push(s);
-    }
-    printemployee(){
-        console.log("List of employee",this.employee);
-    }
-    abstract describe():void;
+class BaseDepartment {
+  protected employees: string[] = [];
+
+  constructor(
+    protected name: string,
+    private readonly id: number
+  ) {}
+
+  describe() {
+    console.log("Department:", this.name);
+  }
+
+  addEmployee(emp: string) {
+    this.employees.push(emp);
+  }
 }
-class Subclass extends Deparment2{
-    constructor(name : string){
-        super(name);
+
+class AccountingDepartment extends BaseDepartment {
+  private reports: string[] = [];
+
+  constructor(id: number) {
+    super("Accounting", id);
+  }
+
+  addReport(text: string) {
+    this.reports.push(text);
+  }
+
+  // Method override
+  addEmployee(emp: string): void {
+    if (emp === "patel") return;
+    this.employees.push(emp);
+  }
+
+  get getReports() {
+    if (this.reports.length === 0) {
+      throw new Error("No reports");
     }
-    describe(): void {
-        console.log("Deptment name : "+this.name);
-    } 
+    return this.reports;
+  }
+
+  set setReports(value: string) {
+    if (!value) return;
+    this.reports.push(value);
+  }
 }
-let obj = new Subclass("account");
-obj.addemployee = "pratik";
-obj.printemployee();
 
+const acc = new AccountingDepartment(1001);
+acc.addEmployee("Pratik");
+acc.addReport("Quarterly report");
+console.log(acc.getReports);
 
+/*
+protected allows child class access.
+private does not.
+*/
+
+// =======================================================
+// 5. Getters & Setters
+// =======================================================
+
+/*
+getter → access like property
+setter → assign like property
+*/
+
+acc.setReports = "Annual report";
+console.log(acc.getReports);
+
+// =======================================================
+// 6. Abstract Classes
+// =======================================================
+
+abstract class DepartmentAbstract {
+  employee: string[] = [];
+
+  constructor(public name: string) {}
+
+  set addEmployee(emp: string) {
+    this.employee.push(emp);
+  }
+
+  printEmployee() {
+    console.log("Employees:", this.employee);
+  }
+
+  abstract describe(): void;
+}
+
+class SubDepartment extends DepartmentAbstract {
+  describe(): void {
+    console.log("Department name:", this.name);
+  }
+}
+
+const sd = new SubDepartment("Accounts");
+sd.addEmployee = "Pratik";
+sd.printEmployee();
+sd.describe();
+
+/*
+Abstract class:
+- Cannot be instantiated
+- Can contain implementation
+- Forces subclasses to implement abstract methods
+*/
+
+// =======================================================
+// 7. Interface vs Abstract Class
+// =======================================================
+
+/*
+Interface:
+- Only structure
+- No implementation
+- Multiple inheritance supported
+
+Abstract Class:
+- Can contain logic
+- Single inheritance
+- Constructor allowed
+*/
+
+// =======================================================
+// 8. Real World Example
+// =======================================================
+
+abstract class Service {
+  abstract execute(): void;
+}
+
+class EmailService extends Service {
+  execute() {
+    console.log("Sending email...");
+  }
+}
+
+const service = new EmailService();
+service.execute();
+
+// =======================================================
+// 9. Interview Summary
+//
+// - Classes support OOP
+// - public/private/protected control access
+// - readonly prevents reassignment
+// - protected accessible in subclasses
+// - abstract enforces implementation
+// - getter/setter behave like properties
+// - constructor shorthand saves code
+//
+// =======================================================
+
+console.log("=== Class Notes Loaded Successfully ===");
